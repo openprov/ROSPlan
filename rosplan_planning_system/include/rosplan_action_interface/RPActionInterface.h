@@ -44,6 +44,7 @@ namespace KCL_rosplan {
 		/* action status */
 		bool action_success;
 		bool action_cancelled;
+		int feedback_seq;
 
 	public:
 

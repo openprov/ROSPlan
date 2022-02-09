@@ -33,6 +33,8 @@ namespace KCL_rosplan
 
 		std::string action_dispatch_topic;
 		std::string action_feedback_topic;
+		int feedback_seq;
+
 
 		/* dispatch state */
 		bool plan_received;
@@ -74,7 +76,7 @@ namespace KCL_rosplan
 		virtual void dispatchPlanActionlib();
 
 		/* Publishes the actionfeedback */
-		void publishFeedback(const rosplan_dispatch_msgs::ActionFeedback& fb);
+		void publishFeedback(rosplan_dispatch_msgs::ActionFeedback& fb);
 
 		/* action feedback methods */
 		virtual void feedbackCallback(const rosplan_dispatch_msgs::ActionFeedback::ConstPtr& msg) =0;

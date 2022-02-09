@@ -15,6 +15,9 @@ namespace KCL_rosplan {
 		std::string kb = "knowledge_base";
 		nh.getParam("knowledge_base", kb);
 
+		// initialize seq number for action feedback
+		feedback_seq = 0;
+
 		// fetch action params
 		std::stringstream ss;
 		ss << "/" << kb << "/domain/operator_details";
@@ -169,6 +172,11 @@ namespace KCL_rosplan {
 
 		// send feedback (enabled)
 		rosplan_dispatch_msgs::ActionFeedback fb;
+
+		fb.header.stamp = ros::Time::now();
+		fb.header.seq = feedback_seq++;
+		fb.header.frame_id = ros::this_node::getName();
+
 		fb.action_id = msg->action_id;
 		fb.status = rosplan_dispatch_msgs::ActionFeedback::ACTION_ENABLED;
 		action_feedback_pub.publish(fb);
@@ -282,12 +290,16 @@ namespace KCL_rosplan {
 
 			// publish feedback (achieved)
 			fb.status = rosplan_dispatch_msgs::ActionFeedback::ACTION_SUCCEEDED_TO_GOAL_STATE;
+			fb.header.stamp = ros::Time::now();
+			fb.header.seq = feedback_seq++;
 			action_feedback_pub.publish(fb);
 
 		} else {
 
 			// publish feedback (failed)
 			fb.status = rosplan_dispatch_msgs::ActionFeedback::ACTION_FAILED;
+			fb.header.stamp = ros::Time::now();
+			fb.header.seq = feedback_seq++;
 			action_feedback_pub.publish(fb);
 		}
 	}

@@ -298,6 +298,11 @@ namespace KCL_rosplan {
             }
             action_msg.duration = 0.001;
             action_msg.dispatch_time = ros::WallTime::now().toSec();
+
+            action_msg.header.stamp = ros::Time::now();
+            action_msg.header.seq = action_id;
+            action_msg.header.frame_id = ros::this_node::getName();
+
             ret.push_back(action_msg);
             ++action_id;
         }

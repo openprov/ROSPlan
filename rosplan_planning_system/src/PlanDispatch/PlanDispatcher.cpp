@@ -41,9 +41,15 @@ namespace KCL_rosplan {
         nh.getParam("action_feedback_topic", action_feedback_topic);
         action_dispatch_publisher = node_handle->advertise<rosplan_dispatch_msgs::ActionDispatch>(action_dispatch_topic, 1, true);
         action_feedback_publisher = node_handle->advertise<rosplan_dispatch_msgs::ActionFeedback>(action_feedback_topic, 1, true);
+        feedback_seq = 0;  // initialize seq number for action feedback
     }
 
-    void PlanDispatcher::publishFeedback(const rosplan_dispatch_msgs::ActionFeedback &fb) {
+    void PlanDispatcher::publishFeedback(rosplan_dispatch_msgs::ActionFeedback &fb) {
+        // setting the msg header
+        fb.header.stamp = ros::Time::now();
+        fb.header.seq = feedback_seq++;
+        fb.header.frame_id = ros::this_node::getName();
+
         if (as_.isActive()) { // Action server is the one dispatching
             rosplan_dispatch_msgs::NonBlockingDispatchFeedback afeedback;
             afeedback.feedback = fb;
