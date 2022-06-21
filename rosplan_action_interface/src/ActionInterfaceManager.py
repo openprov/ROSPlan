@@ -38,6 +38,7 @@ class ActionInterfaceManager(object):
         # feedback
         aft = rospy.get_param('~action_feedback_topic', 'default_feedback_topic')
         self._action_feedback_pub = rospy.Publisher(aft, ActionFeedback, queue_size=10)
+        self._feedback_seq = 0
 
         # subscribe to action dispatch
         adt = rospy.get_param('~action_dispatch_topic', 'default_dispatch_topic')
@@ -72,6 +73,14 @@ class ActionInterfaceManager(object):
     # PDDL action feedback
     def publish_feedback(self, plan_id, action_id, status):
         fb = ActionFeedback()
+
+        # setting the msg header
+        rospy.logdebug("(rosprov) ActionInterfaceManager::publish_feedback: %d (%d).", action_id, status)
+        fb.header.stamp = rospy.get_rostime()
+        fb.header.seq = self._feedback_seq
+        self._feedback_seq += 1
+        fb.header.frame_id = rospy.get_name()
+
         fb.action_id = action_id
         fb.plan_id = plan_id
         fb.status = status
